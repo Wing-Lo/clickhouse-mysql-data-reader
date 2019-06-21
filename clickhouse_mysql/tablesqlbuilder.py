@@ -113,8 +113,15 @@ ENGINE = MergeTree(<PRIMARY_DATE_FIELD>, (<COMMA_SEPARATED_INDEX_FIELDS_LIST>), 
 
         for column_description in columns_description:
             field = column_description['field']
+            nullable = column_description['nullable']
+            logging.debug('field:%s, nullable: %s',field, nullable)
             # primary date and primary key fields can't be nullable
-            ch_type = column_description['clickhouse_type'] if (field == primary_date_field) or (field in primary_key_fields) else column_description['clickhouse_type_nullable']
+            if (field == primary_date_field) \
+                or (field in primary_key_fields) \
+                or (not nullable):
+                ch_type = column_description['clickhouse_type']
+            else:
+                ch_type = column_description['clickhouse_type_nullable']
             ch_columns.append('`{}` {}'.format(field, ch_type))
 
         sql = """CREATE TABLE IF NOT EXISTS {} {} (
@@ -163,6 +170,7 @@ ENGINE = MergeTree(<PRIMARY_DATE_FIELD>, (<COMMA_SEPARATED_INDEX_FIELDS_LIST>), 
         self.client.cursor.execute("DESC {}".format(self.create_full_table_name(db=db, table=table)))
         for (_field, _type, _null, _key, _default, _extra,) in self.client.cursor:
             # Field | Type | Null | Key | Default | Extra
+            logging.debug("_field=%s, _type=%s, _null=%s, _key=%s, _default=%s, _extra=%s",_field, _type, _null, _key, _default, _extra)
 
             # build ready-to-sql column specification Ex.:
             # `integer_1` Nullable(Int32)
@@ -176,7 +184,8 @@ ENGINE = MergeTree(<PRIMARY_DATE_FIELD>, (<COMMA_SEPARATED_INDEX_FIELDS_LIST>), 
                 'clickhouse_type': self.map_type(mysql_type=_type),
                 'clickhouse_type_nullable': self.map_type_nullable(mysql_type=_type, nullable=self.is_field_nullable(_null)),
                 'nullable': self.is_field_nullable(_null),
-                'key': _key,
+                # only consider PRI case
+                'key': _key if _key == 'PRI' else '',
                 'default': _default,
                 'extra': _extra,
             })
@@ -346,7 +355,7 @@ ENGINE = MergeTree(<PRIMARY_DATE_FIELD>, (<COMMA_SEPARATED_INDEX_FIELDS_LIST>), 
                 dst_table
             )
         else:
-            engine = "ENGINE = ReplacingMergeTree() "
+            engine = "ENGINE = MergeTree() "
             if primary_date_field is not None:
                 engine += "PARTITION BY toYYYYMM({}) ".format(primary_date_field)
             if primary_key_fields is not None:

@@ -122,6 +122,7 @@ class Config(object):
                     'dst_schema': self.options['dst_schema'],
                     'dst_distribute': self.options['dst_distribute'],
                     'dst_cluster': self.options['dst_cluster'],
+                    'dst_table': self.options['dst_table'],
                     'dst_create_table': self.options.get_bool('dst_create_table'),
                 },
             },
