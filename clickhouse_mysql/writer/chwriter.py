@@ -101,6 +101,7 @@ class CHWriter(Writer):
             )
             self.client.execute(sql, rows)
         except Exception as ex:
+            logging.exception(ex)
             logging.critical('QUERY FAILED')
             logging.critical('ex={}'.format(ex))
             logging.critical('sql={}'.format(sql))
