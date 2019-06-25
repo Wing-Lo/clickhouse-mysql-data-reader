@@ -91,6 +91,7 @@ class Config(object):
                     'converter_file': self.options['ch_converter_file'],
                     'converter_class': self.options['ch_converter_class'],
                     'column_skip': self.options['column_skip'],
+                    'column_not_nullable': self.options['column_not_nullable'],
                 },
                 'csv': {
                     'column_default_value': self.options['column_default_value'],
@@ -262,6 +263,7 @@ class Config(object):
             tables=self.config['table_builder']['mysql']['tables'],
             tables_prefixes=self.config['table_builder']['mysql']['tables_prefixes'],
             column_skip=self.config['converter']['clickhouse']['column_skip'],
+            column_not_nullable=self.config['converter']['clickhouse']['column_not_nullable'],
         )
 
     def is_migrate_table(self):

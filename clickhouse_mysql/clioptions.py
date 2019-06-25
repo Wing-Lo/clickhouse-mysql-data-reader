@@ -152,6 +152,7 @@ class CLIOptions(Options):
         #
         'column_default_value': None,
         'column_skip': [],
+        'column_not_nullable': [],
         'ch_converter_file': None,
         'ch_converter_class': None,
     }
@@ -464,6 +465,14 @@ class CLIOptions(Options):
             help='Set of column names to skip. Ex.: column1 column2'
         )
         argparser.add_argument(
+            '--column-not-nullable',
+            type=str,
+            nargs='*',
+            action='append',
+            default=self.default_options['column_not_nullable'],
+            help='Set of column names to be not nullable. Ex.: column1 column2'
+        )
+        argparser.add_argument(
             '--ch-converter-file',
             type=str,
             default=self.default_options['ch_converter_file'],
@@ -542,6 +551,7 @@ class CLIOptions(Options):
             #
             'column_default_value': CLIOptions.join_lists_into_dict(args.column_default_value),
             'column_skip': CLIOptions.join_lists(args.column_skip),
+            'column_not_nullable': CLIOptions.join_lists(args.column_not_nullable),
             'ch_converter_file': args.ch_converter_file,
             'ch_converter_class': args.ch_converter_class,
         }

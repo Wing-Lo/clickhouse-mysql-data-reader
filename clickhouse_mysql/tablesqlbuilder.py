@@ -199,9 +199,9 @@ ENGINE = MergeTree(<PRIMARY_DATE_FIELD>, (<COMMA_SEPARATED_INDEX_FIELDS_LIST>), 
         :return: string|None
         """
         for column_description in columns_description:
-            if (column_description['clickhouse_type'] == 'Date'):
+            if (column_description['clickhouse_type'] == 'Date' and not column_description['nullable']):
                 return column_description['field']
-            if (column_description['clickhouse_type'] == 'DateTime'):
+            if (column_description['clickhouse_type'] == 'DateTime' and not column_description['nullable']):
                 return column_description['field']
 
         return None
@@ -226,6 +226,8 @@ ENGINE = MergeTree(<PRIMARY_DATE_FIELD>, (<COMMA_SEPARATED_INDEX_FIELDS_LIST>), 
         :param field: bool, string
         :return: bool
         """
+        if self.column_not_nullable.__contains__(field):
+            return False
         if isinstance(field, bool):
             # for bool - simple statement
             return field

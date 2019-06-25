@@ -31,6 +31,7 @@ class TableProcessor(object):
             tables=None,
             tables_prefixes=None,
             column_skip=[],
+            column_not_nullable=[],
     ):
         """
         :param host: string MySQL host
@@ -54,6 +55,7 @@ class TableProcessor(object):
         self.cluster = cluster
         self.distribute = distribute
         self.column_skip = column_skip
+        self.column_not_nullable = column_not_nullable
 
     def dbs_tables_lists(self):
         """
@@ -140,6 +142,8 @@ class TableProcessor(object):
 
     @staticmethod
     def create_full_table_name(schema=None, db=None, table=None, distribute=None):
+        logging.debug("create_full_table_name:schema={}, db={}, table={}, distribute={}"
+                      .format(schema, db, table, distribute))
         """
         Create fully-specified table name as `schema_all`.`db__table_all`  or `schema`.`db__table` or just `db`.`table`
 
