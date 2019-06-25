@@ -44,6 +44,7 @@ class TableMigrator(TableSQLBuilder):
             tables_prefixes=None,
             tables_where_clauses=None,
             column_skip=[],
+            column_not_nullable=[],
     ):
         super().__init__(
             host=host,
@@ -56,7 +57,8 @@ class TableMigrator(TableSQLBuilder):
             cluster=cluster,
             tables=tables,
             tables_prefixes=tables_prefixes,
-            column_skip=column_skip
+            column_skip=column_skip,
+            column_not_nullable=column_not_nullable
         )
         self.client.cursorclass = SSDictCursor
 

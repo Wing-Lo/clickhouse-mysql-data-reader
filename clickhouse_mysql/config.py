@@ -289,6 +289,7 @@ class Config(object):
             tables_prefixes=self.config['table_migrator']['mysql']['tables_prefixes'],
             tables_where_clauses=self.config['table_migrator']['mysql']['tables_where_clauses'],
             column_skip=self.config['converter']['clickhouse']['column_skip'],
+            column_not_nullable=self.config['converter']['clickhouse']['column_not_nullable'],
         )
         table_migrator.chwriter = self.writer_builder_chwriter().get()
         table_migrator.chclient = self.chclient()

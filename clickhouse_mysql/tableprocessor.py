@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import MySQLdb
 from clickhouse_mysql.dbclient.mysqlclient import MySQLClient
 
 

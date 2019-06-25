@@ -182,8 +182,8 @@ ENGINE = MergeTree(<PRIMARY_DATE_FIELD>, (<COMMA_SEPARATED_INDEX_FIELDS_LIST>), 
                 'field': _field,
                 'mysql_type': _type,
                 'clickhouse_type': self.map_type(mysql_type=_type),
-                'clickhouse_type_nullable': self.map_type_nullable(mysql_type=_type, nullable=self.is_field_nullable(_null)),
-                'nullable': self.is_field_nullable(_null),
+                'clickhouse_type_nullable': self.map_type_nullable(mysql_type=_type, nullable=self.is_field_nullable(_null, _field)),
+                'nullable': self.is_field_nullable(_null, _field),
                 # only consider PRI case
                 'key': _key if _key == 'PRI' else '',
                 'default': _default,
@@ -219,21 +219,23 @@ ENGINE = MergeTree(<PRIMARY_DATE_FIELD>, (<COMMA_SEPARATED_INDEX_FIELDS_LIST>), 
 
         return None if not primary_key_fields else primary_key_fields
 
-    def is_field_nullable(self, field):
+    def is_field_nullable(self, null, field):
         """
         Check whether `nullable` field description value can be interpreted as True.
         Understand MySQL's "Yes" for nullable or just bool value
-        :param field: bool, string
+        :param null: bool, string
+        :param field: field name
         :return: bool
         """
+        logging.debug("column_not_nullable=%s,field=%s"%(self.column_not_nullable,field))
         if self.column_not_nullable.__contains__(field):
             return False
-        if isinstance(field, bool):
+        if isinstance(null, bool):
             # for bool - simple statement
-            return field
-        elif isinstance(field, str):
+            return null
+        elif isinstance(null, str):
             # also accept case-insensitive string 'yes'
-            return True if field.upper() == "YES" else False
+            return True if null.upper() == "YES" else False
 
     def is_field_primary_key(self, field):
         """
